@@ -1,0 +1,18 @@
+{
+    "metrics": [
+        {
+            "namespace": "AWS/EC2",
+            "metricName": "CPUUtilization",
+            "dimensions": [
+                {
+                    "name": "InstanceId",
+                    "value": "i-xxxxxxxxxxxx"
+                }
+            ]
+        }
+    ],
+    "threshold": 80.0,
+    "comparisonOperator": "GreaterThanOrEqualToThreshold",
+    "evaluationPeriods": 1,
+    "alarmActions": ["arn:aws:sns:us-east-1:123456789012:NotifyMe"]
+}
