@@ -1,1 +1,32 @@
-
+pipeline {
+    agent any
+    environment {
+        TF_VAR_aws_access_key = credentials('AWS_ACCESS_KEY')
+        TF_VAR_aws_secret_key = credentials('AWS_SECRET_KEY')
+    }
+    stages {
+        stage('Clone repository') {
+            steps {
+                git 'https://github.com/yourusername/aws-devops-assessment.git'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                sh 'sh jenkins/terraform-init.sh'
+            }
+        }
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform -chdir=terraform apply -auto-approve'
+            }
+        }
+        stage('Deploy Application') {
+            steps {
+                script {
+                    def instanceIp = sh(script: "terraform -chdir=terraform output -raw instance_ip", returnStdout: true).trim()
+                    sh "scp -i /path/to/your-key.pem application/index.html ec2-user@${instanceIp}:/var/www/html/index.html"
+                }
+            }
+        }
+    }
+}
